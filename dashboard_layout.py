@@ -1,11 +1,12 @@
 # dashboard_layout.py
 from dash import html, dcc
-import chart
-import dashboard_callbacks
+import os
 
 def create_layout(df):
     # Define the app layout
     layout = html.Div([
+        
+        # Sidebar with filters
         html.Div([
             html.Label("Filter By Occupation"),
             dcc.Dropdown(
@@ -14,6 +15,7 @@ def create_layout(df):
                 multi=True,
                 value=df['Occupation'].unique()
             ),
+            
             html.Div([
                 html.Label("Filter By Age"),
                 dcc.RangeSlider(
@@ -25,6 +27,7 @@ def create_layout(df):
                     value=[27, 60]
                 ),
             ], style={'width': '100%', 'display': 'inline-block'}),
+            
             html.Label("Filter By Gender"),
             dcc.Dropdown(
                 id='gender-filter',
@@ -34,11 +37,12 @@ def create_layout(df):
             ),
         ], style={'width': '25%', 'float': 'left'}),
 
+        # Main content with graphs
         html.Div([
-            dcc.Graph(id='physical-activity-bar'),
+            dcc.Graph(id='physical-activity-line'),
             dcc.Graph(id='sleep-duration-bar'),
-            dcc.Graph(id='stress-level-bar'),
+            dcc.Graph(id='stress-level-pie'),
         ], style={'width': '75%', 'float': 'right'}),
-    ], style={'backgroundColor': '#d4f2e7', 'height': '100vh'})
+    ], style={'backgroundColor': '#d4f2e7', 'height':'100vh'})
 
     return layout
