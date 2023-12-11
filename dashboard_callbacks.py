@@ -2,15 +2,17 @@
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
-import chart
-import dashboard_layout
+from dashboard_layout import create_layout
 
 def initialize_callbacks(app, df):
+    # Set layout
+    app.layout = create_layout(df)
+
     # Define callback to update the graphs based on filters
     @app.callback(
-        [Output('physical-activity-bar', 'figure'),
+        [Output('physical-activity-line', 'figure'),
          Output('sleep-duration-bar', 'figure'),
-         Output('stress-level-bar', 'figure')],
+         Output('stress-level-pie', 'figure')],
         [Input('occupation-filter', 'value'),
          Input('age-filter', 'value'),
          Input('gender-filter', 'value')]
@@ -37,7 +39,7 @@ def initialize_callbacks(app, df):
         # Merge the count_df with the grouped_df
         final_df = pd.merge(grouped_df, count_df, on='Occupation')
 
-        # Create bar charts
+        # Create bar chart for physical activity level
         physical_activity_fig = px.bar(
             final_df,
             x='Occupation',
@@ -48,6 +50,7 @@ def initialize_callbacks(app, df):
         )
         physical_activity_fig.update_layout(height=250, plot_bgcolor='#d4f2e7')
 
+        # Create bar chart for sleep duration
         sleep_duration_fig = px.bar(
             final_df,
             x='Occupation',
@@ -58,12 +61,12 @@ def initialize_callbacks(app, df):
         )
         sleep_duration_fig.update_layout(height=250, plot_bgcolor='#d4f2e7')
 
-        stress_level_fig = px.bar(
+        # Create pie chart for stress level
+        stress_level_fig = px.pie(
             final_df,
-            x='Occupation',
-            y='Stress Level',
+            names='Occupation',
+            values='Stress Level',
             title='Stress Level',
-            color_discrete_sequence=['red'],
             hover_data=['Count']
         )
         stress_level_fig.update_layout(height=250, plot_bgcolor='#d4f2e7')
